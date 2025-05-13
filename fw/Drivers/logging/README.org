@@ -1,0 +1,43 @@
+#+TITLE: RTT Logging Library
+#+AUTHOR: Silvano Cortesi
+#+DATE: 08.11.2024
+#+EMAIL: silvano.cortesi@pbl.ee.ethz.ch
+
+This repository contains an RTT logging library, wrapped as a CMake module
+** Including library
+*** Add Segger source files
+In order to use SEGGER RTT, use the segger source files found at [[https://github.com/xpacks/segger-rtt/tree/xpack/SEGGER_RTT/RTT][Github SEGGER-RTT]] (based on v6.12j, laters might work) and put them into the folder [[file:segger/]] (~SEGGER_RTT.c~, ~SEGGER_RTT.h~, ~SEGGER_RTT_Conf.h~, ~SEGGER_RTT_printf.c~)
+*** Add to projects CMakeLists.txt
+When including the library into your project, do the following:
+#+begin_src cmake
+...
+# Compile Definitions
+add_compile_definitions(ULOG_ENABLED)
+add_compile_definitions(ULOG_COLOR)
+add_compile_definitions(ULOG_LOG_FILENAME)
+...
+
+...
+# Include ulog
+add_subdirectory(path/to/logging)
+...
+
+...
+# Add linked libraries
+target_link_libraries(${CMAKE_PROJECT_NAME}
+    ...
+
+    # Add user defined libraries
+    logging
+    ...
+)
+...
+
+...
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
+    -u _printf_float
+)
+...
+#+end_src
+** Using different backends
+When you want to use e.g UART instead of RTT, change the functions ~logging.c~ and ~logging.h~ accordingly. Additionally, you need to adapt ~ulog_port.h~ if you want to be thread-safe (else define ~ULOG_CRITICAL_ENTER~ and ~ULOG_CRITICAL_EXIT~ function-macros to do nothing)

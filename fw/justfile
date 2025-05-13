@@ -1,0 +1,54 @@
+EXE_FLASH := "probe-rs"
+EXE_RM := "rm -r"
+
+BUILD_DIR := "build"
+
+TARGET := "wake-mod-firmware.elf"
+TARGET_MCU := "STM32U031K8Ux"
+
+EXE_GDB := "arm-none-eabi-gdb"
+
+build: configure
+	@echo Building...
+	cd {{BUILD_DIR}}/debug && make
+
+build_release: configure_release
+	@echo Building release...
+	cd {{BUILD_DIR}}/release && make
+
+configure:
+	mkdir -p {{BUILD_DIR}}/debug
+	cd {{BUILD_DIR}}/debug && cmake -DCMAKE_BUILD_TYPE=Debug ../../
+
+configure_release:
+	mkdir -p {{BUILD_DIR}}/release
+	cd {{BUILD_DIR}}/release && cmake -DCMAKE_BUILD_TYPE=Release ../../
+
+clean:
+	{{EXE_RM}} {{BUILD_DIR}}
+
+flash: build
+	{{EXE_FLASH}} run --speed 200 --chip {{TARGET_MCU}} --connect-under-reset {{BUILD_DIR}}/debug/{{TARGET}}
+
+attach: build
+	{{EXE_FLASH}} attach --speed 200 --chip {{TARGET_MCU}} {{BUILD_DIR}}/debug/{{TARGET}}
+
+# Start probe-rs debug server.
+debug_server:
+	@echo Starting debug server..
+	{{EXE_FLASH}} gdb --chip {{TARGET_MCU}}
+
+load: build
+	{{EXE_FLASH}} download --speed 200 --chip {{TARGET_MCU}} --connect-under-reset {{BUILD_DIR}}/debug/{{TARGET}}
+
+# Flash, launch debug server, GDB, connect to debug server, and halt at main.
+debug: load
+        #!/usr/bin/env bash
+        {{EXE_FLASH}} gdb --chip {{TARGET_MCU}} &
+        PROBE_RS_PID=$!
+        {{EXE_GDB}} -iex "set auto-load safe-path ./" {{BUILD_DIR}}/debug/{{TARGET}};
+        kill $PROBE_RS_PID
+
+
+flash_release: build_release
+	{{EXE_FLASH}} run --speed 200 --chip {{TARGET_MCU}} --connect-under-reset {{BUILD_DIR}}/release/{{TARGET}}

@@ -1,0 +1,6 @@
+[submodule "fh101rf"]
+	path = fw/Drivers/fh101rf
+	url = git@github.com:trembel/fh101rf.git
+[submodule "lwrb"]
+	path = fw/Drivers/lwrb
+	url = git@github.com:MaJerle/lwrb.git
