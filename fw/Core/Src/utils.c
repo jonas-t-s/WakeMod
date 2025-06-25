@@ -64,7 +64,7 @@ fh101rf_err_t init_struct_fh101rf(struct fh101rf_h *dev) {
     dev->conf.idm_enable.match_bands.band_868 = true;
     dev->conf.idm_enable.match_bands.band_2g4 = false;
 
-    dev->conf.idm_ctrl.ctrl = FH101RF_CTRL_IND_ONLY;
+    dev->conf.idm_ctrl.ctrl = FH101RF_CTRL_IND_GROUP_BROAD;
 
     dev->conf.fifo_length.band_433 = FH101RF_FIFO_LEN_BIT16;
     dev->conf.fifo_length.band_868 = FH101RF_FIFO_LEN_BIT32;
