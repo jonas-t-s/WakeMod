@@ -158,6 +158,7 @@ Total 8 data bytes.
 *   **Data Rate (enum):** See `phy_speed` Enum Values table below.
 *   **IRQ Source Mask/Flags:** See IRQ Source Bits table below. Bitmask used in `SetupWuR` (Byte 4) to 
 enable specific FH101RF interrupt sources, or flags indicating occurred interrupts in `IRQ Reason` (Byte 0).
+*   **(Active Branches << 2) | IDM_CTRL:** Bit [5:2]: Set the active Branch (strong|medium|weak). Bit [1:0]: IDM_CTRL (0b00: individual ID only, 0b01: Individual ID or Groupwise ID, 0b10: only broadcast ID, 0b11: Individual 16bit ID groupwise ID or broadcast ID.
 *   **Send Add. Data Flag (LSb):** Least Significant Bit of Byte 4 for `SendWuC`. `1` = Additional Data in     Bytes 5-10 (Add. Data [0-5]) is valid and should be sent. `0` = Additional Data is ignored (but bytes 5-10 
 must still be sent, typically as `0x00`).
 *   **Recv Add. Data Flag (LSb):** Least Significant Bit of Byte 1 for `IRQ Reason`. `1` = Received Data 
